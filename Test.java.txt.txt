@@ -1,0 +1,105 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class SmartLightingApp {
+
+    private static int brightness = 50; // Brightness level (0-100)
+    private static String color = "White"; // Default color
+    private static Timer timer = new Timer();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean exit = false;
+
+        System.out.println("Welcome to Smart Lighting: Control Your Ambiance with LED Bulbs");
+
+        while (!exit) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Set Brightness");
+            System.out.println("2. Set Color");
+            System.out.println("3. Schedule Lighting");
+            System.out.println("4. Show Current Settings");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            switch (choice) {
+                case 1:
+                    setBrightness(scanner);
+                    break;
+                case 2:
+                    setColor(scanner);
+                    break;
+                case 3:
+                    scheduleLighting(scanner);
+                    break;
+                case 4:
+                    showCurrentSettings();
+                    break;
+                case 5:
+                    exit = true;
+                    System.out.println("Exiting... Thank you for using Smart Lighting.");
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+
+        scanner.close();
+        timer.cancel(); // Stop the timer when exiting the application
+    }
+
+    private static void setBrightness(Scanner scanner) {
+        System.out.print("Enter brightness level (0-100): ");
+        int newBrightness = scanner.nextInt();
+        if (newBrightness >= 0 && newBrightness <= 100) {
+            brightness = newBrightness;
+            System.out.println("Brightness set to " + brightness + "%");
+        } else {
+            System.out.println("Invalid brightness level. Please enter a value between 0 and 100.");
+        }
+    }
+
+    private static void setColor(Scanner scanner) {
+        System.out.print("Enter color: ");
+        String newColor = scanner.nextLine();
+        color = newColor;
+        System.out.println("Color set to " + color);
+    }
+
+    private static void scheduleLighting(Scanner scanner) {
+        System.out.print("Enter delay in seconds to change lighting: ");
+        int delay = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter brightness level (0-100) for scheduled change: ");
+        int scheduledBrightness = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter color for scheduled change: ");
+        String scheduledColor = scanner.nextLine();
+
+        if (scheduledBrightness < 0 || scheduledBrightness > 100) {
+            System.out.println("Invalid brightness level. Please enter a value between 0 and 100.");
+            return;
+        }
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                brightness = scheduledBrightness;
+                color = scheduledColor;
+                System.out.println("Scheduled change executed: Brightness set to " + brightness + "%, Color set to " + color);
+            }
+        }, delay * 1000); // Delay is in milliseconds
+        System.out.println("Lighting change scheduled in " + delay + " seconds.");
+    }
+
+    private static void showCurrentSettings() {
+        System.out.println("\nCurrent Settings:");
+        System.out.println("Brightness: " + brightness + "%");
+        System.out.println("Color: " + color);
+    }
+}
+
